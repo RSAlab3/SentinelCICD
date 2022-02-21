@@ -14,7 +14,7 @@
             "kind": "Scheduled",
             "apiVersion": "2021-09-01-preview",
             "properties": {
-                "displayName": "uccicd_Failed AzureAD logons but success logon to host -- sentinelD",
+                "displayName": "uccicd_Failed 00000 AzureAD logons but success logon to host -- sentinelD",
                 "description": "Identifies a list of IP addresses with a minimum number (default of 5) of failed logon attempts to Azure Active Directory.\nUses that list to identify any successful remote logons to hosts from these IPs within the same timeframe.",
                 "severity": "Medium",
                 "enabled": false,

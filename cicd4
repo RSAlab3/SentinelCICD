@@ -14,7 +14,7 @@
             "kind": "Scheduled",
             "apiVersion": "2021-09-01-preview",
             "properties": {
-                "displayName": "CICD3 High License utilization",
+                "displayName": "CICD4 High License utilization",
                 "description": "If utilization of license is greater than 1 GB  in past 24 hours an alert is generated",
                 "severity": "Medium",
                 "enabled": true,

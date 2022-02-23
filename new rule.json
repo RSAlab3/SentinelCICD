@@ -8,6 +8,8 @@
     },
     "resources": [
         {
+            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/',parameters('analyticsRuleId'),'/actions/',parameters('automationRuleId'))]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/', parameters('analyticsRuleId'), '/',parameters('automationRuleId'))]",
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
             "kind": "Scheduled",
             "apiVersion": "2021-09-01-preview",

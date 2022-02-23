@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspace": {
+            "type": "String"
+        }
+    },
+    "resources": [
+        {
+            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/9346ed40-8d36-4395-91e4-351f99a6594b')]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/9346ed40-8d36-4395-91e4-351f99a6594b')]",
+            "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
+            "kind": "Scheduled",
+            "apiVersion": "2021-09-01-preview",
+            "properties": {
+                "displayName": "CICD_Failed AzureAD logons but success logon to host",
+                "description": "Identifies a list of IP addresses with a minimum number (default of 5) of failed logon attempts to Azure Active Directory.\nUses that list to identify any successful remote logons to hosts from these IPs within the same timeframe.",
+                "severity": "Medium",
+                "enabled": false,
+                "query": "let timeframe = 1d;\r\n//Adjust this threshold to fit the environment\r\nlet signin_threshold = 5;\r\n//Make a list of all IPs with failed signins to AAD above our threshold\r\nlet suspicious_signins =\r\nSigninLogs\r\n| where TimeGenerated >= ago(timeframe)\r\n| where ResultType !in (\"0\", \"50125\", \"50140\")\r\n| where IPAddress != \"127.0.0.1\"\r\n| summarize count() by IPAddress\r\n| where count_ > signin_threshold\r\n| summarize make_list(IPAddress);\r\n//See if any of these IPs have sucessfully logged into *nix hosts\r\nlet linux_logons =\r\nSyslog\r\n| where TimeGenerated >= ago(timeframe)\r\n| where Facility contains \"auth\" and ProcessName != \"sudo\"\r\n| where SyslogMessage has \"Accepted\"\r\n| extend SourceIP = extract(\"(([0-9]{1,3})\\\\.([0-9]{1,3})\\\\.([0-9]{1,3})\\\\.(([0-9]{1,3})))\",1,SyslogMessage)\r\n| where SourceIP in (suspicious_signins)\r\n| extend Reason = \"Multiple failed AAD logins from IP address\"\r\n| project TimeGenerated, Computer, HostIP, IpAddress = SourceIP, SyslogMessage, Facility, ProcessName, Reason;\r\n//See if any of these IPs have sucessfully logged into Windows hosts\r\nlet win_logons =\r\nSecurityEvent\r\n| where TimeGenerated >= ago(timeframe)\r\n| where EventID == 4624\r\n| where LogonType in (10, 7, 3)\r\n| where IpAddress != \"-\"\r\n| where IpAddress in (suspicious_signins)\r\n| extend Reason = \"Multiple failed AAD logins from IP address\"\r\n| project TimeGenerated, Account, AccountType, Computer, Activity, EventID, LogonProcessName, IpAddress, LogonTypeName, TargetUserSid, Reason;\r\nunion isfuzzy=true linux_logons,win_logons\r\n| extend timestamp = TimeGenerated, AccountCustomEntity = Account, IPCustomEntity = IpAddress, HostCustomEntity = Computer\n",
+                "queryFrequency": "P1D",
+                "queryPeriod": "P1D",
+                "triggerOperator": "GreaterThan",
+                "triggerThreshold": 0,
+                "suppressionDuration": "PT5H",
+                "suppressionEnabled": false,
+                "tactics": [
+                    "InitialAccess",
+                    "CredentialAccess"
+                ],
+                "techniques": [],
+                "alertRuleTemplateName": null,
+                "incidentConfiguration": {
+                    "createIncident": true,
+                    "groupingConfiguration": {
+                        "enabled": false,
+                        "reopenClosedIncident": false,
+                        "lookbackDuration": "PT5H",
+                        "matchingMethod": "AllEntities",
+                        "groupByEntities": [],
+                        "groupByAlertDetails": null,
+                        "groupByCustomDetails": null
+                    }
+                },
+                "eventGroupingSettings": {
+                    "aggregationKind": "SingleAlert"
+                },
+                "alertDetailsOverride": null,
+                "customDetails": null,
+                "entityMappings": null
+            }
+        }
+    ]
+}

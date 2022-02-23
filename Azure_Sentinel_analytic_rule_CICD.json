@@ -14,7 +14,7 @@
             "kind": "Scheduled",
             "apiVersion": "2021-09-01-preview",
             "properties": {
-                "displayName": "CICD_Threat_intel_blacklisted_ip_match",
+                "displayName": "CICD_Threat_intel_blacklisted_ip_match ",
                 "description": "Source Ip is trying to comminicate IP which is blacklisted by TCS Threat intel Data.",
                 "severity": "Medium",
                 "enabled": true,

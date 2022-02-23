@@ -8,13 +8,13 @@
     },
     "resources": [
         {
-            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/9346ed40-8d36-4395-91e4-351f99a6594b')]",
-            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/9346ed40-8d36-4395-91e4-351f99a6594b')]",
+            "id": "[concat(resourceId('Microsoft.OperationalInsights/workspaces/providers', parameters('workspace'), 'Microsoft.SecurityInsights'),'/alertRules/9346ed40-8d36-4395-91e4-351f99a6595b')]",
+            "name": "[concat(parameters('workspace'),'/Microsoft.SecurityInsights/9346ed40-8d36-4395-91e4-351f99a6595b')]",
             "type": "Microsoft.OperationalInsights/workspaces/providers/alertRules",
             "kind": "Scheduled",
             "apiVersion": "2021-09-01-preview",
             "properties": {
-                "displayName": "CICD_Failed logons",
+                "displayName": "CICD_Azure Failed logons",
                 "description": "Identifies a list of IP addresses with a minimum number (default of 5) of failed logon attempts to Azure Active Directory.\nUses that list to identify any successful remote logons to hosts from these IPs within the same timeframe.",
                 "severity": "Medium",
                 "enabled": false,
